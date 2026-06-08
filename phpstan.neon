@@ -1,3 +1,5 @@
 parameters:
+  scanFiles:
+    - stubs/swoole.stub
   excludePaths:
     - vendor

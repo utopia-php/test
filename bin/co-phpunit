@@ -1,0 +1,34 @@
+#!/usr/bin/env php
+<?php
+
+use Utopia\Tests\Async\Runner;
+
+foreach ([__DIR__.'/../../../autoload.php', __DIR__.'/../vendor/autoload.php'] as $autoload) {
+    if (\is_file($autoload)) {
+        require $autoload;
+        break;
+    }
+}
+
+$concurrency = 10;
+$paths = [];
+
+foreach (\array_slice($argv, 1) as $arg) {
+    if (\str_starts_with($arg, '--concurrency=')) {
+        $concurrency = (int) \substr($arg, \strlen('--concurrency='));
+    } else {
+        $paths[] = $arg;
+    }
+}
+
+if ($paths === []) {
+    $paths = ['tests'];
+}
+
+$runner = new Runner($concurrency);
+
+foreach ($paths as $path) {
+    $runner->addDirectory($path);
+}
+
+exit($runner->run());

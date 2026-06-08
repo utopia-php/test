@@ -76,6 +76,58 @@ self::assertEventually(function () use ($connection) {
 });
 ```
 
+### Coroutine Runner
+
+`Utopia\Tests\Async\Runner` runs your existing PHPUnit test cases concurrently —
+each test in its own [Swoole](https://www.swoole.com/) coroutine, bounded by a
+pool of N coroutines. While one test waits on coroutine I/O (a channel, a hooked
+socket, `Coroutine::sleep`), another runs, so a suite of slow integration tests
+finishes in roughly the time of its slowest test rather than their sum.
+
+It requires the `swoole` extension.
+
+**Command line:**
+
+```bash
+# Run every *Test.php under tests/, 10 at a time (the default)
+vendor/bin/co-phpunit tests --concurrency=20
+```
+
+**Programmatically:**
+
+```php
+use Utopia\Tests\Async\Runner;
+
+$runner = new Runner(concurrency: 20);
+$runner->addDirectory(__DIR__ . '/tests');
+// ...or queue classes explicitly: $runner->addTestCase(MyTest::class);
+
+exit($runner->run());
+```
+
+Your test classes are plain `PHPUnit\Framework\TestCase`s — `setUp`/`tearDown`,
+`setUpBeforeClass`/`tearDownAfterClass`, `#[DataProvider]`, assertions and
+`markTestSkipped()` all work as usual:
+
+```php
+use PHPUnit\Framework\TestCase;
+use Swoole\Coroutine as Co;
+
+class HealthTest extends TestCase
+{
+    public function testServiceResponds(): void
+    {
+        Co::sleep(0.5); // e.g. an async HTTP call to a service
+        $this->assertTrue(true);
+    }
+}
+```
+
+The runner drives each test's lifecycle directly instead of going through
+PHPUnit's sequential runner, so process-global features (output-buffering
+assertions, global-state isolation, separate-process tests) are out of scope —
+it is built for coroutine-friendly integration tests that assert and skip.
+
 ## Development
 
 ### Run Tests

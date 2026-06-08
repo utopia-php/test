@@ -1,5 +1,6 @@
 <testsuites>
   <testsuite name="unit">
     <directory>tests</directory>
+    <exclude>tests/fixtures</exclude>
   </testsuite>
 </testsuites>

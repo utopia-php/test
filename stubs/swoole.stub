@@ -1,0 +1,75 @@
+<?php
+
+namespace {
+    const SWOOLE_HOOK_ALL = 2147483647;
+}
+
+namespace Swoole {
+    class Runtime
+    {
+        public static function enableCoroutine(int $flags = \SWOOLE_HOOK_ALL): void
+        {
+        }
+    }
+
+    class Coroutine
+    {
+        public static function getCid(): int
+        {
+        }
+
+        /**
+         * @param callable():void $fn
+         */
+        public static function create(callable $fn): int
+        {
+        }
+
+        public static function sleep(float $seconds): void
+        {
+        }
+    }
+}
+
+namespace Swoole\Coroutine {
+    /**
+     * @param callable():void $fn
+     */
+    function run(callable $fn): bool
+    {
+    }
+
+    class Channel
+    {
+        public function __construct(int $capacity = 1)
+        {
+        }
+
+        public function push(mixed $data, float $timeout = -1): bool
+        {
+        }
+
+        public function pop(float $timeout = -1): mixed
+        {
+        }
+    }
+
+    class WaitGroup
+    {
+        public function __construct(int $delta = 0)
+        {
+        }
+
+        public function add(int $delta = 1): void
+        {
+        }
+
+        public function done(): void
+        {
+        }
+
+        public function wait(float $timeout = -1): bool
+        {
+        }
+    }
+}
